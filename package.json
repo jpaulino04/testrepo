@@ -1,0 +1,33 @@
+{
+  "name": "testrepo",
+  "version": "1.0.0",
+  "description": "This is a test",
+  "main": "server.js",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "config": "^3.1.0",
+    "express": "^4.16.4",
+    "express-validator": "^5.3.1",
+    "gravatar": "^1.8.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.5.8",
+    "nodemon": "^1.19.0",
+    "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "concurrently": "^4.1.0"
+  },
+  "scripts": {
+    "server": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jpaulino04/testrepo.git"
+  },
+  "author": "jp",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jpaulino04/testrepo/issues"
+  },
+  "homepage": "https://github.com/jpaulino04/testrepo#readme"
+}
