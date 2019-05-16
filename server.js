@@ -10,6 +10,10 @@ app.use(express.json({extended: false})); // for parsing application/json
 
 const port = process.env.PORT || 5010;
 
+
+//User routes
+app.use('/api/users', require('./routes/api/users'))
+
 app.get('/', (req, res) => {
     res.send("Keep reaching out!")
 })
