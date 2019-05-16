@@ -3,9 +3,10 @@ const router = express.Router();
 const User = require('../../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const config = require('config');
 const { check, validationResult } = require('express-validator/check');
 
-
+// /api/users route
 router.post('/', [
 
     //check username
@@ -47,10 +48,19 @@ router.post('/', [
 
 
             //create a payload and sign the jsonwebtoken token
+            const payload = {
+                user: {
+                    id : user.id
+                }
+            }
+            console.log(payload.userid)
 
-    
-            console.log(user)
-            res.json({user})
+            jwt.sign(payload, config.get('mySecretToken'), {expiresIn: 3600}, (err, token) => {
+                if(err) throw err;
+                res.json({token})
+                //You can send back anything, depending on your app
+            })    
+            
         } catch(err){
             console.log("Server Error "+ err)
             res.status(500).json({error: "Server Error!"})
