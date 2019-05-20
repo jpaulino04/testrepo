@@ -7,6 +7,7 @@ const User = require('../../models/User');
 
 router.post('/', async (req, res) => {
     
+    //Ensure you are getting these names in the request
     const {username, email, password} = req.body;
 
     try {
@@ -31,13 +32,13 @@ router.post('/', async (req, res) => {
         console.log('password hashed')
 
         user.save();
+        //info about the user:
         const payload = {
             user : {
                 id: user.id
             }
         }
-        console.log('before token')
-        //send token
+        //sign and send token
         jwt.sign(payload, config.get('mySecretToken') ,function(err, token){
             if(err){
                 console.log(err)

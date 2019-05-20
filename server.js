@@ -13,6 +13,7 @@ const port = process.env.PORT || 5010;
 
 //User routes
 app.use('/api/users', require('./routes/api/users'))
+app.use('/api/auth', require('./routes/api/auth'))
 
 app.get('/', (req, res) => {
     res.send("Keep reaching out!")
