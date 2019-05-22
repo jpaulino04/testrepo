@@ -1,8 +1,12 @@
 const express   = require('express');
 const app       = express();
+const dbConnect = require('./config/db');
 
 //Set port
 const port = process.env.Port || 5010;
+
+//Connect to DB
+dbConnect();
 
 // for parsing application/json
 app.use(express.json())
