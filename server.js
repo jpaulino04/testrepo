@@ -11,11 +11,13 @@ dbConnect();
 // for parsing application/json
 app.use(express.json())
 
+//Routes
+app.use('/api/users', require('./routes/api/users'));
+
 
 app.get('/', (req, res) => {
     res.send("Your are in the right track!")
 });
-
 
 app.listen(port, (err)=>{
     if(err) throw err;
