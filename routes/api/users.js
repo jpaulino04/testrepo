@@ -45,22 +45,26 @@ async (req, res) =>{
         const hash = await bcrypt.hash(user.password, salt)        
         user.password = hash;        
         user.save()
+
+        const payload = {
+            user: {
+                id: user.id
+            }
+        }
         
         //Create and return token
-        jwt.sign(user.password, config.get('mySecret'), function(err, token){
+        jwt.sign(payload, config.get('mySecret'), function(err, token){
             if(err){
                 return res.send('jwt Error')
             }
-            return res.json({token: token})
+            return res.json({token})
         })
 
 
 
     } catch (err){
         return res.send('Server Error!')
-    }
-
-    
+    }    
 
 })
 
