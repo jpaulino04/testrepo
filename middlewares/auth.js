@@ -12,12 +12,11 @@ module.exports = (req, res, next) => {
         if(!token){
             return res.status(401).json({msg: 'No token, Auth denied'})
         }
-
+        
         //verify token
         try{
 
             const decoded = jwt.verify(token, config.get('mySecret'));
-
             req.user = decoded.user;
             next()           
 
