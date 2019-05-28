@@ -1,0 +1,65 @@
+const   express     = require('express');
+const   router      = express.Router();
+const   config      = require('config');
+const   {check, validationResult } = require('express-validator/check');
+const   bcrypt      = require('bcryptjs');
+const   jwt         = require('jsonwebtoken');
+const   User        = require('../../models/User');
+
+
+
+router.get('/', (req, res) => {
+
+    res.json({msg: "users route!"})
+
+})
+
+
+router.post('/', 
+[
+    check('username', 'username is required').exists(),
+    check('email', 'Must be a valid email').isEmail(),
+    check('password', 'Password must be at leat 6 characters long').isLength({ min: 6 })
+],
+
+async (req, res) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+
+    const {username, email, password} = req.body;
+
+    let user = await User.findOne({email})
+    if(user){
+        return res.json({msg: "User already exists!"})
+    }
+    
+    user = new User({
+        username,
+        email,
+        password
+    })
+
+    
+    const salt  = await bcrypt.genSalt(10);
+    const hash  = await bcrypt.hash(user.password, salt);
+    
+    user.password = hash;
+    user.save();
+
+    const payload = {
+        user: {
+            id: user.id
+        }
+    }
+
+    jwt.sign(payload, config.get('mySecret'), { expiresIn: 360000 }, function(err, token) {
+        console.log(token);
+        res.json({token})
+    });
+})
+
+
+module.exports = router;
