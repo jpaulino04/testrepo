@@ -1,7 +1,11 @@
-const   express = require('express');
-        app     = express();
+const   express     = require('express');
+        app         = express();
+const   dbConnect   = require('./config/db');
          
-const port = process.env.PORT || 3010;
+const port = process.env.PORT || 5010;
+
+//connect to db
+dbConnect();
 
 //json parser
 app.use(express.json()) // for parsing application/json
