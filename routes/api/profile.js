@@ -48,6 +48,39 @@ router.get('/me', auth, async(req, res) => {
 // POST api/profile/
 // @desc Create profile
 // Private
+router.post('/', auth,
+[
+    check('skills', 'Skills is required').not().isEmpty(),
+    check('status', 'Status is required').not().isEmpty(),
+],
 
+async(req, res) => {
+
+    const errors = validationResult(req)
+
+    if(!errors.isEmpty()){
+        console.log(errors.array())
+        return res.json({Errors:errors.array()})
+    }
+
+    const {company, website, location, bio, githubusername, instagram, twitter, facebook, youtube, status, skills} = req.body;
+
+    const profileInfo = {company, website, location, bio, githubusername, instagram, twitter, facebook, youtube, status, skills}
+
+    // try {
+        console.log(req.user)
+        const profile = await Profile.findOneAndUpdate({user: req.user}, {$set: profileInfo}, {new: true})
+
+        await profile.save()
+
+        res.json(profile);
+        
+    // } catch (err) {
+    //     if(err){
+    //         res.status(500).send('Server Error');
+    //     }
+    // }
+
+})
 
 module.exports = router;
