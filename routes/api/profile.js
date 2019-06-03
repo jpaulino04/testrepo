@@ -3,83 +3,126 @@ const router    = express.Router();
 const config    = require('config');
 const {check, validationResult} = require('express-validator/check');
 const Profile   = require('../../models/Profile');
+const User      = require('../../models/User');
 const request   = require('request');
 const auth      = require('../../middlewares/auth');
 
 
-// GET api/profile/
+// GET api/profile/me
 // @desc Get all profiles
 // Public
-router.get('/', async (req, res) => {
-
+router.get('/me', auth, async (req, res) => {
     try {
-        const profile = await Profile.find().populate('user', ['avatar', 'username', 'email'])
+        console.log(req.user)
+        const profile = await Profile.findOne({user: req.user.id}).populate('user', ['name', 'avatar'])
 
         if(!profile){
-            return res.status(404).json({msg: 'Profile not found'})
+            return res.status(400).json({ msg: "There is no profile for this user"});
         }
-        res.json(profile)        
+
+        res.json(profile)
     } catch (err) {
         console.error(err.message)
-        res.json({msg: 'Server Error'})
+        return res.status(500).send('Serve Error')
     }
 })
 
-// GET api/profile/me
-// @desc Get your own profiles
+// GET api/profile/
+// @desc Create/ Update profile
 // Private
 
-router.get('/me', auth, async(req, res) => {
-
-    try {
-        const profile = await Profile.findOne({user:req.user}).populate('user', ['username', 'email', 'avatar'])
-
-        if(!profile){
-            return res.status(404).json({msg:" Profile not found"})
-        }
-
-        res.json(profile);
-    } catch (err) {
-        return res.status(500).send('Server Error')
-    }
-
-})
-
-// POST api/profile/
-// @desc Create profile
-// Private
-router.post('/', auth,
+router.post('/', [auth, 
 [
-    check('skills', 'Skills is required').not().isEmpty(),
     check('status', 'Status is required').not().isEmpty(),
+    check('skills', 'Skills is required').not().isEmpty()
 ],
 
 async(req, res) => {
 
-    const errors = validationResult(req)
+    const errors = validationResult(req);
 
     if(!errors.isEmpty()){
-        console.log(errors.array())
-        return res.json({Errors:errors.array()})
+        return res.json({Errors: errors.array()});
     }
 
-    const {company, website, location, bio, githubusername, instagram, twitter, facebook, youtube, status, skills} = req.body;
+    const {company, website, location, bio, githubusername, instagram, facebook, youtube, status, skills, linkedin, twitter} = req.body;
 
-    const profileInfo = {company, website, location, bio, githubusername, instagram, twitter, facebook, youtube, status, skills}
+    //Build profile object
+    const profileInfo = {};
+    profileInfo.user = req.user.id;
+    if(company) profileInfo.company = company;
+    if(website) profileInfo.website = website;
+    if(location) profileInfo.location = location;
+    if(bio) profileInfo.bio = bio;
+    if(status) profileInfo.status = status;
+    if(githubusername) profileInfo.githubusername = githubusername;
+    if(skills){
+        profileInfo.skills = skills.split(',').map(skill => skill.trim()); //**************** */
+    }
 
-    // try {
-        console.log(req.user)
-        const profile = await Profile.findOneAndUpdate({user: req.user}, {$set: profileInfo}, {new: true})
+    // Build social object
+    profileInfo.social = {};
+    if(youtube) profileInfo.social.youtube = youtube;
+    if(twitter) profileInfo.social.twitter = twitter;
+    if(facebook) profileInfo.social.facebook = facebook;
+    if(linkedin) profileInfo.social.linkedin = linkedin;
+    if(instagram) profileInfo.social.instagram = instagram;
 
+    
+    try {
+        let profile = await Profile.findOne({user: req.user.id});
+
+        if(profile){
+            //Update
+            profile = await Profile.findOneAndUpdate({user: req.user.id}, {$set: profileInfo}, {new: true});
+
+            res.json({msg:"Profile Updated", profile});
+        }
+
+        //Create
+        profile = new Profile(profileInfo);
         await profile.save()
-
         res.json(profile);
+
+    } catch (err) {
+        return res.status(500).json({msg: "Server Error!"});        
+    }
+}
+
+])
+
+// GET api/profile
+// @desc Get all profiles
+// Public
+router.get('/', async(req, res) => {
+    
+    try {
+        let profiles = await Profile.find().populate('user', ['avatar', 'username', 'email']);
+        res.json(profiles)
+    } catch (err) {
+        if(err){
+            res.status(500).json({msg: "Server Error"})
+        }
+    }
+})
+
+// GET api/profile/user/:user_id
+// @desc Get profile by id
+// Private
+router.get('/user/:user_id/', auth, async(req, res) => {
+
+    try {
+        let profile = await Profile.findOne({user: req.params.user_id}).populate('user', ['avatar', 'email']);
+
+        if(!profile){
+            return res.status(404).json({msg: "Profile not found!"})
+        }
+
+        res.json(profile)
         
-    // } catch (err) {
-    //     if(err){
-    //         res.status(500).send('Server Error');
-    //     }
-    // }
+    } catch (err) {
+        return res.json({msg: "Server Error"});
+    }
 
 })
 

@@ -9,9 +9,7 @@ const   User        = require('../../models/User');
 
 
 router.get('/', (req, res) => {
-
     res.json({msg: "users route!"})
-
 })
 
 
@@ -56,7 +54,7 @@ async (req, res) => {
     }
 
     jwt.sign(payload, config.get('mySecret'), { expiresIn: 360000 }, function(err, token) {
-        console.log(token);
+        console.log("User has been created");
         res.json({token})
     });
 })

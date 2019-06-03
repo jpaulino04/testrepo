@@ -11,10 +11,10 @@ module.exports = async (req, res, next) => {
 
     try{
 
-        jwt.verify(token, config.get('mySecret'), function(err){
-            if(err) throw err;
-            next();
-        })
+        const decoded = jwt.verify(token, config.get('mySecret'));
+        req.user = decoded.user;
+        next();
+        
 
     }catch(err){
         res.json({Error: "Unable to validate login"})
