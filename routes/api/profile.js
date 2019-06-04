@@ -238,13 +238,30 @@ async(req, res) => {
 
         education.unshift(newEdu)
         profile.save();
-        
+
         res.send(profile)
         
     } catch (err) {
         return res.status(500).json({msg: "Server error!"});
     }
+})
+
+
+// DELETE api/profile/education
+// @desc DELETE Profile Education
+// Private
+router.delete('/education/:edu_id', auth, async(req, res) => {
+
+    let profile = await Profile.findOne({user: req.user.id});
+    let education = profile.education;
+    const eduId = req.params.edu_id;
+    let delIndex = education.map(item => item.id).indexOf(eduId)
     
+    education.splice(delIndex, 1);
+
+    await profile.save();
+    console.log("Education deleted")
+    res.json(profile)
 
 })
 
