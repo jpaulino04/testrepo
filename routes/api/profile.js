@@ -228,6 +228,23 @@ async(req, res) => {
         return res.json({msg: errors.array()})
     }
 
+    const {school, degree, fieldofstudy, from, to, current, description} = req.body;
+    const newEdu = { school, degree, fieldofstudy, from, to, current, description};
+
+    try {
+
+        let profile = await Profile.findOne({user:req.user.id})
+        let education = profile.education;
+
+        education.unshift(newEdu)
+        profile.save();
+        
+        res.send(profile)
+        
+    } catch (err) {
+        return res.status(500).json({msg: "Server error!"});
+    }
+    
 
 })
 
