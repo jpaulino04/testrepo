@@ -209,4 +209,26 @@ router.delete('/experience/:exp_id', auth, async(req, res) => {
     
 })
 
+// Add api/profile/education
+// @desc Add Profile Education
+// Private
+router.put('/education', [auth,
+[
+    check('school', 'School is required').not().isEmpty(),
+    check('degree', 'Degree is required').not().isEmpty(),
+    check('fieldofstudy', 'Field of study is required').not().isEmpty(),
+    check('from', 'From is required').not().isEmpty()
+],
+],
+
+async(req, res) => {
+    const errors = validationResult(req);
+
+    if(!errors.isEmpty()){
+        return res.json({msg: errors.array()})
+    }
+
+
+})
+
 module.exports = router;
