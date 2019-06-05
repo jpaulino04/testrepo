@@ -252,16 +252,39 @@ async(req, res) => {
 // Private
 router.delete('/education/:edu_id', auth, async(req, res) => {
 
-    let profile = await Profile.findOne({user: req.user.id});
-    let education = profile.education;
-    const eduId = req.params.edu_id;
-    let delIndex = education.map(item => item.id).indexOf(eduId)
-    
-    education.splice(delIndex, 1);
+    try {
+        let profile = await Profile.findOne({user: req.user.id});
+        let education = profile.education;
+        const eduId = req.params.edu_id;
+        let delIndex = education.map(item => item.id).indexOf(eduId)
+        
+        //Remove 1 education from education array at delIndex
+        education.splice(delIndex, 1);
 
-    await profile.save();
-    console.log("Education deleted")
-    res.json(profile)
+        await profile.save();
+        console.log("Education deleted")
+        res.json(profile)
+
+    } catch (err) {
+        return res.status(500).json({msg: "Server error!"})
+    }
+})
+
+// GET api/profile/github/:username
+// @desc Get user repos from Girgub
+// Public
+
+router.get('/github/:username', (req, res) => { 
+
+    try {
+        
+
+        
+    } catch (err) {
+
+        console.error(err.message)
+        return res.status(500).send('Server Error')
+    }
 
 })
 
