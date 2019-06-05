@@ -276,7 +276,7 @@ router.delete('/education/:edu_id', auth, async(req, res) => {
 
 router.get('/github/:username', (req, res) => { 
 
-    // try {
+    try {
         
         const options = {
             uri: `https://api.github.com/users/${req.params.username}/repos?per_page=5&sort=created:asc&client_id=${config.get('githubClientId')}&client_secret=${config.get('githubClientSecret')}`,
@@ -293,11 +293,11 @@ router.get('/github/:username', (req, res) => {
 
             res.json(JSON.parse(body))
         })
-    // } catch (err) {
+    } catch (err) {
 
-    //     console.error(err.message)
-    //     return res.status(500).send('Server Error')
-    // }
+        console.error(err.message)
+        return res.status(500).send('Server Error')
+    }
 
 })
 
