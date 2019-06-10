@@ -5,13 +5,11 @@ const   {check, validationResult } = require('express-validator/check');
 const   bcrypt      = require('bcryptjs');
 const   jwt         = require('jsonwebtoken');
 const   User        = require('../../models/User');
-
-
+const gravatar = require('gravatar');
 
 router.get('/', (req, res) => {
     res.json({msg: "users route!"})
 })
-
 
 router.post('/', 
 [
@@ -29,23 +27,22 @@ async (req, res) => {
 
     const {username, email, password} = req.body;
 
+    // Get User gravatar
+    const avatar = gravatar.url(email, {s: '200', r: 'pg', d: '404'});
+
     let user = await User.findOne({email})
     if(user){
         return res.json({msg: "User already exists!"})
     }
     
-    user = new User({
-        username,
-        email,
-        password
-    })
+    user = new User({ username, email, password, avatar });
 
     
     const salt  = await bcrypt.genSalt(10);
     const hash  = await bcrypt.hash(user.password, salt);
     
     user.password = hash;
-    user.save();
+    await user.save();
 
     const payload = {
         user: {
