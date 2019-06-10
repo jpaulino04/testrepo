@@ -30,7 +30,6 @@ router.get('/me', auth, async (req, res) => {
 // GET api/profile/
 // @desc Create/ Update profile
 // Private
-
 router.post('/', [auth, 
 [
     check('status', 'Status is required').not().isEmpty(),
@@ -70,19 +69,20 @@ async(req, res) => {
 
     
     try {
-        let profile = await Profile.findOne({user: req.user.id});
+        let profile = await Profile.findOne({user:req.user.id});
 
         if(profile){
             //Update
             profile = await Profile.findOneAndUpdate({user: req.user.id}, {$set: profileInfo}, {new: true});
-
-            res.json({msg:"Profile Updated", profile});
+            console.log('Profile updated')
+            return res.json({msg:"Profile Updated", profile});
         }
 
         //Create
         profile = new Profile(profileInfo);
         await profile.save()
-        res.json(profile);
+        console.log('Created Profile')
+        return res.json(profile);
 
     } catch (err) {
         return res.status(500).json({msg: "Server Error!"});        
@@ -238,7 +238,6 @@ async(req, res) => {
 
         education.unshift(newEdu)
         profile.save();
-
         res.send(profile)
         
     } catch (err) {

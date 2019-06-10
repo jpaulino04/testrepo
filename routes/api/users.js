@@ -50,6 +50,7 @@ async (req, res) => {
         }
     }
 
+    //sign using your secret
     jwt.sign(payload, config.get('mySecret'), { expiresIn: 360000 }, function(err, token) {
         console.log("User has been created");
         res.json({token})
