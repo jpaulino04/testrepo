@@ -96,17 +96,38 @@ router.delete('/:post_id', auth, async(req, res) => {
 })
 
 //-----------------------------------------------------------
-// Put /api/posts/likes/:post_id
+// Put /api/posts/like/:post_id
 // @desc Like a post
 // Private
 router.put('/like/:post_id', auth, async(req, res) => { 
+    //Note : a like will have its own id
+    // So the post will have a like_id and a user_id
 
-    const post = await Post.findById(req.params.post_id).sort({date: -1})
+    try {
+        const post = await Post.findById(req.params.post_id);
 
-    console.log(post.likes)
-    
+        if(post.likes.filter(like => like.user.toString() == req.user.id).length > 0){
+            return res.status(400).json({msg: "Post already liked"})
+        }
+        post.likes.unshift({user: req.user.id})
 
+        await post.save();
+
+        return res.json(post.likes)
+    } catch (err) {
+        console.error(err)
+        res.status(500).send("Server Error");
+    }
 })
+
+//-----------------------------------------------------------
+// Put /api/posts/unlike/:post_id
+// @desc Unlike a post (that had already been liked)
+// Private
+router.put('/like/:post_id', auth, async(req, res) => {
+    
+})
+
 
 module.exports = router;
 
