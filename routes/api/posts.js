@@ -148,18 +148,44 @@ router.put('/unlike/:post_id', auth, async(req, res) => {
 
 
 //-----------------------------------------------------------
-// Put /api/posts/comment
+// Put /api/posts/:post_id/comments
 // @desc Add a Post comment
 // Private
 
-router.put('/comment', [auth,
+router.put('/:post_id/comments', [auth,
 ],
 [
     check('text', 'Text is required').not().isEmpty()
 ],
 async (req, res) =>{
 
-let errors = validationResult(req);
+    let errors = validationResult(req);
+
+    if(!errors.isEmpty()){
+        console.error(errors.message)
+        res.status(500).json({msg: errors.array});
+    }
+
+    try {
+        const post = await Post.findById(req.params.post_id);
+        const user = await User.findById(req.user.id);
+
+        const newComment = {
+            user: user.id,
+            text: req.body.text,
+            avatar: user.avatar,
+            name: user.username
+        }
+        
+        post.comments.unshift(newComment)
+
+        await post.save();
+
+        return res.json(post)
+
+    } catch (err) {
+        return res.status(500).send("Server Error")
+    }
 
 })
 
