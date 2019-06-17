@@ -1,6 +1,6 @@
 const express   = require('express');
 const router    = express.Router();
-const {check, validationRequest} = require('express-validator/check');
+const {check, validationResult} = require('express-validator/check');
 const User = require('../../models/User');
 const Profile = require('../../models/Profile');
 const Post = require('../../models/Post');
@@ -146,6 +146,22 @@ router.put('/unlike/:post_id', auth, async(req, res) => {
     }
 })
 
+
+//-----------------------------------------------------------
+// Put /api/posts/comment
+// @desc Add a Post comment
+// Private
+
+router.put('/comment', [auth,
+],
+[
+    check('text', 'Text is required').not().isEmpty()
+],
+async (req, res) =>{
+
+let errors = validationResult(req);
+
+})
 
 module.exports = router;
 
