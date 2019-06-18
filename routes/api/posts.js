@@ -195,11 +195,33 @@ async (req, res) =>{
 router.delete('/comments/:post_id/:comment_id', auth, async(req, res) => {
 
     const errors = validationResult(req);
-
     if(!errors.isEmpty()){
         console.log(error.message)
         res.status(500).json({msg: errors.array});
     }
+
+    let post = await Post.findById(req.params.post_id);
+    let user = await User.findById(req.user.id);
+
+    //Get the comment from the comments
+    let comment = post.comments.find(comment => comment.id.toString() === req.params.comment_id);
+    
+    //get index
+    let getIndex = post.comments.map(comment => comment.id.toString()).indexOf(req.params.comment_id)
+
+    //verify user is the owner
+    if(comment.user.toString() === req.user.id.toString()){
+        console.log(comment.user.toString())
+        console.log(req.user.id.toString())
+        post.comments.splice(getIndex, 1);
+
+        post.save();
+        res.json(post.comments);
+    }
+    
+
+    
+
 
 })
 
