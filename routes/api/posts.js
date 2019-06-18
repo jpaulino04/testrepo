@@ -186,8 +186,23 @@ async (req, res) =>{
     } catch (err) {
         return res.status(500).send("Server Error")
     }
+})
+
+//-----------------------------------------------------------
+// DELETE /api/posts/comments/post:id/:comment_id
+// @desc Delete a comment
+// Private
+router.delete('/comments/:post_id/:comment_id', auth, async(req, res) => {
+
+    const errors = validationResult(req);
+
+    if(!errors.isEmpty()){
+        console.log(error.message)
+        res.status(500).json({msg: errors.array});
+    }
 
 })
+
 
 module.exports = router;
 
