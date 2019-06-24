@@ -205,6 +205,11 @@ router.delete('/comments/:post_id/:comment_id', auth, async(req, res) => {
 
     //Get the comment from the comments
     let comment = post.comments.find(comment => comment.id.toString() === req.params.comment_id);
+
+    //Check if comment
+    if(!comment){
+        return res.status(404).json({msg: "Comment not found"})
+    }
     
     //get index
     let getIndex = post.comments.map(comment => comment.id.toString()).indexOf(req.params.comment_id)
