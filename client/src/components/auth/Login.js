@@ -4,11 +4,11 @@ import {Link} from 'react-router-dom';
 const Login = () => {
 
     const [formData, setFormData] = useState({
-        name: "",
         email: "",
         password: "",
-        password2: ""
     });
+
+    const {email, password} = formData;
     
     //Continue with the form and the state
     const onChange = e => setFormData({...formData, [e.target.name]:e.target.value})
@@ -33,6 +33,7 @@ const Login = () => {
                             type="email"
                             placeholder="Email Address"
                             name="email"
+                            value={email}
                             required
                             onChange = {e => onChange(e)}
                             
@@ -43,6 +44,7 @@ const Login = () => {
                             type="password"
                             placeholder="Password"
                             name="password"
+                            value={password}
                             onChange = {e => onChange(e)}
                         />
                     </div>
