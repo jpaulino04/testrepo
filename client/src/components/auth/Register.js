@@ -3,12 +3,13 @@ import {Link} from 'react-router-dom';
 
 const Register = () => {
 
+    //Get familiar with hooks
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         password: "",
         password2: ""
-    });
+    }); 
 
     const {name, email, password, password2} = formData;
 
@@ -17,7 +18,9 @@ const Register = () => {
 
     const onSubmit = e => {
         e.preventDefault();
-        console.log(formData)
+        if(password !== password2) {
+            console.log("password don't match")
+        }
     }
     return (
         <Fragment>
