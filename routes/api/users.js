@@ -13,7 +13,6 @@ router.get('/', (req, res) => {
 
 router.post('/', 
 [
-    check('username', 'username is required').exists(),
     check('email', 'Must be a valid email').isEmail(),
     check('password', 'Password must be at leat 6 characters long').isLength({ min: 6 })
 ],
