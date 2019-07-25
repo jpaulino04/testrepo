@@ -1,8 +1,13 @@
 import React, {Fragment, useState} from 'react';
 import {Link} from 'react-router-dom';
+import { connect } from 'react-redux';
+import { setAlert } from '../../actions/alert';
+import PropTypes from 'prop-types';
+
+//
 // import axios from 'axios';
 
-const Register = () => {
+const Register = ({setAlert}) => {
 
     //Get familiar with hooks
     const [formData, setFormData] = useState({
@@ -20,28 +25,9 @@ const Register = () => {
     const onSubmit = async e => {
         e.preventDefault();
         if(password !== password2) {
-            console.log("password don't match")
+            setAlert('Passwords do not match', 'danger')
         } else {
             console.log('Success');
-            // const newUser = {
-            //     name, 
-            //     email,
-            //     password
-            // }
-
-            // try {
-            //     const config = {
-            //         headers: {
-            //             'Content-Type': 'application/json'
-            //         }                        
-            //     }
-            //     const body = JSON.stringify(newUser);
-
-            //     const res = await axios.post('/api/users', body, config);
-            //     console.log(res.data)
-            // } catch(err){
-            //     console.log(err.response.data);
-            // }
         }
     }
     return (
@@ -103,4 +89,11 @@ const Register = () => {
     )
 }
 
-export default Register;
+Register.propTypes = {
+    setAlert: PropTypes.func.isRequired
+}
+
+export default connect(null, {setAlert})(Register);
+//When you bring an action, you  need to pass it in
+//The first parameter to connect would be state (if any).
+//The second parameter is an object with any action: allows you to access props.setAlert
